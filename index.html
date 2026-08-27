@@ -78,6 +78,19 @@
             color: #ef4444;
         }
 
+        @keyframes floatUpHeart {
+            0% { opacity: 1; transform: translateY(0) scale(0.5); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+        }
+
+        .mini-heart {
+            position: fixed;
+            pointer-events: none;
+            animation: floatUpHeart 1s ease-out forwards;
+            color: #ef4444;
+            z-index: 50;
+        }
+
         #particle-canvas {
             position: fixed;
             top: 0;
@@ -148,12 +161,24 @@
                     <p class="text-2xl font-bold text-rose-500">I love you.</p>
                     
                     <div class="flex justify-center gap-4 mt-6">
-                         <!-- Interactive hearts -->
-                         <svg class="heart-button text-gray-300 w-10 h-10" onclick="this.classList.add('clicked')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                         <svg class="heart-button text-gray-300 w-12 h-12" onclick="this.classList.add('clicked')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                         <svg class="heart-button text-gray-300 w-10 h-10" onclick="this.classList.add('clicked')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                         <svg class="heart-button text-gray-300 w-10 h-10 relative" onclick="tapHeart(this, 0)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                         <svg class="heart-button text-gray-300 w-12 h-12 relative" onclick="tapHeart(this, 1)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                         <svg class="heart-button text-gray-300 w-10 h-10 relative" onclick="tapHeart(this, 2)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                     </div>
                     <p class="text-xs text-gray-400 mt-2">(Tap the hearts)</p>
+                    <p id="allHeartsText" class="hidden-message text-rose-500 font-bold mt-4 text-xl cursive">You have my whole heart, always. ❤️</p>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-rose-100 text-center">
+                    <p class="text-sm text-gray-500 mb-4 italic">Whenever work feels like too much, tap this...</p>
+                    
+                    <button id="reminderBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-200 font-semibold py-3 px-6 rounded-full shadow-sm transition transform hover:-translate-y-1 text-sm sm:text-base w-full sm:w-auto mx-auto active:scale-95">
+                        Tap here when work feels too heavy 🥺
+                    </button>
+                    
+                    <div id="reminderDisplay" class="mt-6 min-h-[60px] flex items-center justify-center opacity-0 transition-opacity duration-500">
+                        <p id="reminderText" class="text-rose-600 font-medium text-lg italic px-4"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -165,7 +190,6 @@
     </main>
 
     <script>
-        // Interactive button logic
         document.getElementById('missYouBtn').addEventListener('click', function() {
             this.style.display = 'none';
             const secret = document.getElementById('secretMessage');
@@ -176,7 +200,98 @@
             }, 50);
         });
 
-        // Background Particle Logic (Soft, floating circles/hearts effect)
+        let clickedHearts = [false, false, false];
+
+        function tapHeart(el, index) {
+            // Add clicked styling to turn it red
+            el.classList.add('clicked');
+            
+            // Create mini hearts explosion effect
+            createHeartExplosion(el);
+            
+            // Check if all hearts are clicked to reveal the secret text
+            if (!clickedHearts[index]) {
+                clickedHearts[index] = true;
+                if (clickedHearts.every(v => v)) {
+                    setTimeout(() => {
+                        const allHeartsMsg = document.getElementById('allHeartsText');
+                        allHeartsMsg.classList.add('show-message');
+                        // Small delay to allow CSS display change before fading in
+                        setTimeout(() => allHeartsMsg.style.opacity = '1', 50);
+                    }, 400);
+                }
+            }
+        }
+
+        function createHeartExplosion(parentEl) {
+            const rect = parentEl.getBoundingClientRect();
+            // Create 3 to 5 mini floating hearts
+            const numHearts = Math.floor(Math.random() * 3) + 3; 
+            
+            for (let i = 0; i < numHearts; i++) {
+                const miniHeart = document.createElement('div');
+                miniHeart.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+                miniHeart.className = 'mini-heart';
+                
+                // Position randomly right over the clicked heart
+                const offsetX = (Math.random() - 0.5) * 40;
+                miniHeart.style.left = `${rect.left + (rect.width / 2) - 10 + offsetX}px`;
+                miniHeart.style.top = `${rect.top + (rect.height / 2) - 10}px`;
+                
+                // Add slight random delay and angle for a natural effect
+                miniHeart.style.animationDelay = `${Math.random() * 0.1}s`;
+                miniHeart.style.transform = `rotate(${(Math.random() - 0.5) * 45}deg)`;
+                
+                document.body.appendChild(miniHeart);
+                
+                // Clean up the DOM by removing the heart after its animation finishes
+                setTimeout(() => miniHeart.remove(), 1000);
+            }
+        }
+
+        const reminders = [
+            "Take a deep breath. I'm right here cheering you on.",
+            "Your hard work doesn't go unnoticed. I'm so proud of you.",
+            "It's okay to feel tired. You're allowed to rest, my love.",
+            "You are my favorite part of every day.",
+            "Even when you're stressed, you are absolutely beautiful to me.",
+            "I can't wait to hear your voice again when you're ready.",
+            "You are doing so much better than you think.",
+            "Just a little reminder: I love you endlessly.",
+            "One step at a time. You've got this, and I've got you."
+        ];
+
+        const reminderBtn = document.getElementById('reminderBtn');
+        const reminderDisplay = document.getElementById('reminderDisplay');
+        const reminderText = document.getElementById('reminderText');
+        let lastIndex = -1;
+
+        reminderBtn.addEventListener('click', function() {
+            // Fade out current text if any
+            reminderDisplay.style.opacity = '0';
+            
+            setTimeout(() => {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * reminders.length);
+                } while (newIndex === lastIndex && reminders.length > 1);
+                
+                lastIndex = newIndex;
+                reminderText.innerText = `"${reminders[newIndex]}"`;
+                
+                // Fade back in
+                reminderDisplay.style.opacity = '1';
+                
+                // Add a tiny little bounce animation to the text
+                reminderText.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    reminderText.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    reminderText.style.transform = 'scale(1)';
+                }, 50);
+
+            }, 300); // Wait for fade out to complete
+        });
+
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         
